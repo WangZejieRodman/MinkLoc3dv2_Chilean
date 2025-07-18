@@ -1,0 +1,18 @@
+[DEFAULT]
+dataset_folder = /home/wzj/pan2/Chilean_Underground_Mine_Dataset_Many_Times
+
+[TRAIN]
+num_workers = 8
+batch_size = 1024
+batch_split_size = 64
+val_batch_size = 128
+lr = 5e-4
+epochs = 5
+scheduler_milestones = 10, 15
+aug_mode = 1
+weight_decay = 1e-4
+loss = TruncatedSmoothAP
+tau1 = 0.01
+positives_per_query = 2
+train_file = training_queries_baseline_chilean.pickle
+val_file = test_queries_baseline_chilean.pickle

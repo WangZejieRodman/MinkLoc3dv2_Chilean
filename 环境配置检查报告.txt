@@ -1,0 +1,58 @@
+MinkLoc3Dv2 环境检查详细报告
+==================================================
+检查时间: 2025-07-17 12:25:03
+环境状态: EXCELLENT
+
+
+基础环境检查
+------
+✅ PASS OS: Linux-5.15.0-134-generic-x86_64-with-glibc2.17
+✅ PASS Python: 3.8.20 (default, Oct  3 2024, 15:24:27) 
+[GCC 11.2.0]
+✅ PASS Conda Env: minkloc3dv2
+✅ PASS CUDA_HOME: /usr/local/cuda-11.8
+✅ PASS LD_LIBRARY_PATH: /usr/local/cuda-11.8/lib64:/home/wzj/pan1/lidar2rosbag_KITTI_ws/devel/lib:/home/wzj/vinsmono_ws/devel/lib:/opt/ros/noetic/lib:/opt/ros/noetic/lib/x86_64-linux-gnu:/usr/local/cuda/lib64:/usr/local/cuda-12.6/lib64
+✅ PASS OMP_NUM_THREADS: 12
+
+CUDA和PyTorch兼容性
+---------------
+✅ PASS NVCC: 11.8
+✅ PASS GPU Info: NVIDIA GeForce RTX 3090 Ti, 560.35.03, 24564
+✅ PASS PyTorch: 1.12.1
+✅ PASS PyTorch CUDA: 11.6
+✅ PASS CUDA Available: True
+✅ PASS GPU Count: 1
+✅ PASS GPU Name: NVIDIA GeForce RTX 3090 Ti
+✅ PASS Compute Capability: 8.6
+✅ PASS CUDA Operations: Passed
+
+MinkowskiEngine功能测试
+-------------------
+✅ PASS MinkowskiEngine Import: 0.5.4
+✅ PASS ME CUDA Support: Available
+❌ FAIL ME Backend: No module named 'MinkowskiEngine.MinkowskiEngineBackend'
+✅ PASS SparseTensor Creation: Shape: torch.Size([4, 1])
+✅ PASS GPU SparseTensor: cuda:0
+✅ PASS MinkowskiConvolution: Created
+✅ PASS CPU Convolution: Output shape: torch.Size([4, 2])
+✅ PASS GPU Convolution: Output shape: torch.Size([4, 2])
+✅ PASS Other ME Layers: BatchNorm, Pooling, ReLU
+
+依赖包检查
+-----
+✅ PASS torch: 1.12.1
+✅ PASS torchvision: 0.13.1
+✅ PASS MinkowskiEngine: 0.5.4
+✅ PASS pytorch_metric_learning: 2.8.1
+✅ PASS wandb: 0.21.0
+✅ PASS pandas: 1.4.2
+✅ PASS numpy: 1.24.3
+✅ PASS pexpect: 4.9.0
+✅ PASS IPython: 8.12.2
+✅ PASS jupyter: Installed
+✅ PASS ninja (system): 1.10.0
+✅ PASS g++ (system): g++ (Ubuntu 9.4.0-1ubuntu1~20.04.3) 9.4.0
+✅ PASS make (system): GNU Make 4.2.1
+
+警告:
+  • ME Backend: No module named 'MinkowskiEngine.MinkowskiEngineBackend'
