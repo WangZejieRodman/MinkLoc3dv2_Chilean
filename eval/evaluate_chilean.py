@@ -1,5 +1,5 @@
-# Chilean Underground Mine Dataset Evaluation
-# Evaluation using Chilean dataset protocol and test sets
+# Chilean Underground Mine Dataset Evaluation - Fixed Version
+# Fixed 1% recall calculation bug
 
 from sklearn.neighbors import KDTree
 import numpy as np
@@ -127,18 +127,23 @@ def compute_embedding_chilean(model, pc, device, params: TrainingParams):
 
 
 def get_recall_chilean(database_vectors, query_vectors, query_set, database_set, log=False):
-    """计算Chilean数据集的召回率"""
+    """计算Chilean数据集的召回率 - 修复1% recall计算bug"""
 
     # 当嵌入归一化时，使用欧几里得距离与使用余弦距离给出相同的最近邻搜索结果
     database_nbrs = KDTree(database_vectors)
 
-    num_neighbors = 25
-    recall = [0] * num_neighbors
-
-    one_percent_retrieved = 0
+    # 计算需要的最大K值
     threshold = max(int(round(len(database_vectors) / 100.0)), 1)
+    max_k_needed = max(25, threshold)  # 取25和1%阈值的最大值
 
+    print(f"Database size: {len(database_vectors)}")
+    print(f"1% threshold: {threshold}")
+    print(f"Max K needed: {max_k_needed}")
+
+    recall = [0] * 25  # 保持原有25个位置的recall
+    one_percent_retrieved = 0
     num_evaluated = 0
+
     for i in range(len(query_vectors)):
         # i是查询元素索引
         if i not in query_set:
@@ -154,8 +159,28 @@ def get_recall_chilean(database_vectors, query_vectors, query_set, database_set,
             continue
         num_evaluated += 1
 
-        # 找到最近邻
-        distances, indices = database_nbrs.query(np.array([query_vectors[i]]), k=num_neighbors)
+        # 检索足够多的邻居 - 修复bug的关键
+        k_to_retrieve = min(max_k_needed, len(database_vectors))
+        distances, indices = database_nbrs.query(
+            np.array([query_vectors[i]]),
+            k=k_to_retrieve
+        )
+
+        # 计算Recall@1到Recall@25（保持原有逻辑）
+        for j in range(min(25, len(indices[0]))):
+            if indices[0][j] in true_neighbors:
+                recall[j] += 1
+                break
+
+        # 正确计算1% recall
+        if len(indices[0]) >= threshold:
+            top_1_percent = set(indices[0][:threshold])
+            if len(top_1_percent.intersection(set(true_neighbors))) > 0:
+                one_percent_retrieved += 1
+        else:
+            # 如果检索结果少于1%阈值，检查全部结果
+            if len(set(indices[0]).intersection(set(true_neighbors))) > 0:
+                one_percent_retrieved += 1
 
         if log:
             # 记录Chilean数据集的搜索结果
@@ -182,14 +207,6 @@ def get_recall_chilean(database_vectors, query_vectors, query_set, database_set,
             out_file_name = "chilean_search_results.txt"
             with open(out_file_name, "a") as f:
                 f.write(s)
-
-        for j in range(len(indices[0])):
-            if indices[0][j] in true_neighbors:
-                recall[j] += 1
-                break
-
-        if len(list(set(indices[0][0:threshold]).intersection(set(true_neighbors)))) > 0:
-            one_percent_retrieved += 1
 
     if num_evaluated > 0:
         one_percent_recall = (one_percent_retrieved / float(num_evaluated)) * 100
@@ -238,7 +255,7 @@ if __name__ == "__main__":
             self.config = '../config/config_chilean.txt'
             # self.model_config = '../models/minkloc3dv1.txt'
             self.model_config = '../models/minkloc3dv2.txt'  # 可选择更强的模型
-            self.weights = '../weights/model_chilean_final.pth'  # 需要根据实际权重文件路径修改
+            self.weights = '../weights/model_chilean_MinkLoc_20250718_1514_final.pth'  # 需要根据实际权重文件路径修改
             self.debug = False
             self.log = False
 
