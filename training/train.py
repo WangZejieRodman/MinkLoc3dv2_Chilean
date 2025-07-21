@@ -13,8 +13,7 @@ if __name__ == '__main__':
     class Args:
         def __init__(self):
             self.config = '../config/config_baseline_v2.txt'
-            self.model_config = '../models/minkloc3dv1.txt'
-            #self.model_config = '../models/minkloc3dv2.txt'
+            self.model_config = '../models/minkloc3dv2.txt'
             self.debug = False
 
 
